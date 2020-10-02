@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 import scipy.optimize as op
 import Model 
-import CVS
+import csv
 import DataPrep
 
 # %%
-data = DataPrep.get_default_date()
+data = pd.read_csv("OneMonthData.csv")
 
 (new_contract_date_series, new_published_ad_date_series) = DataPrep.convert_date_to_days_from_first_published_ad_date(
     data['contract_date'],
@@ -15,6 +15,7 @@ data = DataPrep.get_default_date()
 
 one_month_ads = data.loc[data['ad_publicized_date'] < '2005-02-01'].sort_values('ad_publicized_date')
 one_month_contracts = data.loc[data['contract_date'] < '2005-02-01'].sort_values('contract_date')
+
 
 ad_info_one_month = pd.DataFrame({
     'contract_date_as_days': new_contract_date_series,

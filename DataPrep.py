@@ -1,26 +1,6 @@
 import pandas as pd
 
 
-df = pd.read_csv("mstat_CSV.csv")
-
-
-def get_default_date():
-    data = df[['contract_price',
-               'living_area',
-               'contract_date',
-               'real_estate_ad_publicized']].rename(
-        columns={'real_estate_ad_publicized': 'ad_publicized_date'}
-    )
-    data[['contract_date', 'ad_publicized_date']] = data[['contract_date', 'ad_publicized_date']] \
-        .apply(pd.to_datetime, format='%Y-%m-%d')
-
-    data.dropna(axis=0, how='any', inplace=True)
-    data = data.loc[df['county'] == 'STOCKHOLM']
-    data = data.loc[data['contract_date'] >= data['ad_publicized_date']]
-    data.reset_index(inplace=True, drop=True)
-    data.to_csv('OneMonthData.csv')
-    return data
-
 
 def convert_date_to_days_from_first_published_ad_date(contract_date_series, published_ad_date_series):
     first_published_add_date = published_ad_date_series.min()
