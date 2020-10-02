@@ -1,26 +1,6 @@
 import pandas as pd
 
 
-data = pd.read_csv('stockholm.csv', index_col='Index')
-
-def get_default_date():
-    data[['contract_date', 'ad_publicized_date']] = data[['contract_date', 'ad_publicized_date']] \
-        .apply(pd.to_datetime, format='%Y-%m-%d')
-
-    return data
-
-
-def convert_date_to_days_from_first_published_ad_date(contract_date_series, published_ad_date_series):
-    first_published_add_date = published_ad_date_series.min()
-    first_published_add_date - published_ad_date_series[0]
-    new_contract_date_series = contract_date_series.apply(
-        lambda x: (x - first_published_add_date).days)
-    new_published_ad_date_series = published_ad_date_series.apply(
-        lambda x: (x - first_published_add_date).days)
-
-    return new_contract_date_series, new_published_ad_date_series
-
-# %%
 
 def one_month_data(data_frame):
     return data_frame.loc[data_frame['contract_date_as_days'] < 643]
