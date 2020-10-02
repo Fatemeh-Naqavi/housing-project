@@ -6,7 +6,7 @@ import csv
 import DataPrep
 
 # %%
-data = pd.read_csv("OneMonthData.csv")
+data = DataPrep.get_default_date()
 
 (new_contract_date_series, new_published_ad_date_series) = DataPrep.convert_date_to_days_from_first_published_ad_date(
     data['contract_date'],
