@@ -18,6 +18,7 @@ def get_default_date():
     data = data.loc[df['county'] == 'STOCKHOLM']
     data = data.loc[data['contract_date'] >= data['ad_publicized_date']]
     data.reset_index(inplace=True, drop=True)
+    data.to_csv('OneMonthData.csv')
     return data
 
 

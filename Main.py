@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import scipy.optimize as op
 import Model 
-
+import CVS
 import DataPrep
 
 # %%
