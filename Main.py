@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import scipy.optimize as op
 import Model 
-import csv
 import DataPrep
 
 # %%
@@ -10,6 +9,7 @@ ad_info_one_month = pd.read_csv('OneMonthData.csv', index_col='Index')
 contract_info_one_month = DataPrep.one_month_data(ad_info_one_month)
 ad_info_one_month['living_area'] = ad_info_one_month['living_area'].apply(lambda x: np.log(x))
 ad_info_one_month['contract_price'] = ad_info_one_month['contract_price'].apply(lambda x: np.log(x))
+contract_info_one_month['contract_price'] = contract_info_one_month['contract_price'].apply(lambda x: np.log(x))
 
 # %%
 def log_likelihood(beta):
