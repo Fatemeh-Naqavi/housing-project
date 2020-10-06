@@ -3,7 +3,7 @@ from statistics import NormalDist
 
 
 def one_month_data(data_frame):
-    return data_frame.loc[data_frame['contract_date_as_days'] < 643]
+    return data_frame.loc[data_frame['contract_date_as_days'] < 671]
 
 # %%
 def get_available_ads(index_row, base_contract_date, base_contract_price, ad_info):
@@ -26,7 +26,15 @@ def get_dif_cdf(ad_info_series, index):
     ad_info_sorted_by_price_with_new_index = ad_info_sorted_by_price.reset_index()
     row = ad_info_sorted_by_price_with_new_index[ad_info_sorted_by_price_with_new_index['Index'] == index]
     lower_price = row.contract_price
-    upper_price = ad_info_sorted_by_price_with_new_index.loc[row.index + 1].contract_price
+    
+    idx = row.index.astype(int)[0]
+    upper_price_index = idx
+    for i in range(idx,len(ad_info_sorted_by_price_with_new_index)):
+        if (ad_info_sorted_by_price_with_new_index.contract_price.loc[i] != lower_price).bool():
+            upper_price_index = i
+            break
+    
+    upper_price = ad_info_sorted_by_price_with_new_index.loc[upper_price_index].contract_price
     return get_dif_cdf_for_prices(lower_price, upper_price)
 
 def get_dif_cdf_for_prices(lower_price, upper_price):
