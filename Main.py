@@ -13,8 +13,8 @@ data = DataPrep.get_default_date()
     data['ad_publicized_date']
 )
 
-one_month_ads = data.loc[data['ad_publicized_date'] < '2005-02-01'].sort_values('ad_publicized_date')
-one_month_contracts = data.loc[data['contract_date'] < '2005-02-01'].sort_values('contract_date')
+one_month_ads = data.loc[data['ad_publicized_date'] < '2005-02-01'].sort_values('ad_publicized_date').copy()
+one_month_contracts = data.loc[data['contract_date'] < '2005-02-01'].sort_values('contract_date').copy()
 
 ad_info_one_month = pd.DataFrame({
     'contract_date_as_days': new_contract_date_series,

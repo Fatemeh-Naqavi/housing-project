@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-df = pd.read_csv("mstat_CSV.csv")
+df = pd.read_csv("mstat_CSV.csv",low_memory=False)
 
 
 def get_default_date():
@@ -10,7 +10,7 @@ def get_default_date():
                'contract_date',
                'real_estate_ad_publicized']].rename(
         columns={'real_estate_ad_publicized': 'ad_publicized_date'}
-    )
+    ).copy()
     data[['contract_date', 'ad_publicized_date']] = data[['contract_date', 'ad_publicized_date']] \
         .apply(pd.to_datetime, format='%Y-%m-%d')
 
