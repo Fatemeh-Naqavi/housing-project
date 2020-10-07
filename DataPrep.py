@@ -3,7 +3,7 @@ from statistics import NormalDist
 
 
 def one_month_data(data_frame):
-    return data_frame.loc[data_frame['contract_date_as_days'] < 671]
+    return data_frame.loc[data_frame['contract_date_as_days'] < 643].copy() #671 for all first month
 
 # %%
 def get_available_ads(index_row, base_contract_date, base_contract_price, ad_info):
