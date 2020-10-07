@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import DataPrep
 
 
@@ -15,7 +16,8 @@ def get_probability(utility):
 
 
 def calculate_prob(contract_info_one_month, ad_info_one_month, beta):
-    contract_info_one_month.loc[:,'prob'] = 0
+    prob = pd.Series()
+    prob = prob.reindex(contract_info_one_month.index)
     for i, item in enumerate(contract_info_one_month['contract_date_as_days']):
         index_row = contract_info_one_month.index[i]
         base_contract_price = contract_info_one_month['contract_price'].loc[index_row]
@@ -27,5 +29,5 @@ def calculate_prob(contract_info_one_month, ad_info_one_month, beta):
         else:
             dif_cdf = DataPrep.get_last_dif_cdf(base_contract_price)
         print("I : ", i, "CDF: ", dif_cdf, "Length: ", len(available_ad_df))
-        contract_info_one_month['prob'].loc[index_row] = prob_serie.loc[index_row] * dif_cdf
-    return contract_info_one_month['prob']
+        prob.loc[index_row] = prob_serie.loc[index_row].copy() * dif_cdf
+    return prob
