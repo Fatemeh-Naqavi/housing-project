@@ -21,7 +21,7 @@ def get_available_ads(index_row, base_contract_date, base_contract_price, ad_inf
     available_ad_df = ad_info.loc[available_ads][ad_info.loc[available_ads]['contract_price'] <= base_contract_price]    
     return available_ad_df 
 
-def get_dif_cdf(ad_info_series, index):
+def get_dif_cdf(ad_info_series, index,beta):
     ad_info_sorted_by_price = ad_info_series.sort_values()
     ad_info_sorted_by_price_with_new_index = ad_info_sorted_by_price.reset_index()
     row = ad_info_sorted_by_price_with_new_index[ad_info_sorted_by_price_with_new_index['Index'] == index]
@@ -35,17 +35,20 @@ def get_dif_cdf(ad_info_series, index):
             break
     
     upper_price = ad_info_sorted_by_price_with_new_index.loc[upper_price_index].contract_price
-    return get_dif_cdf_for_prices(lower_price, upper_price)
+    return get_dif_cdf_for_prices(lower_price, upper_price,beta)
 
-def get_dif_cdf_for_prices(lower_price, upper_price):
-    cdf_low = get_cdf(lower_price)
-    cdf_up = get_cdf(upper_price)
+def get_dif_cdf_for_prices(lower_price, upper_price,beta):
+    cdf_low = get_cdf(lower_price,beta)
+    cdf_up = get_cdf(upper_price,beta)
     cdf = cdf_up - cdf_low
     return  cdf
 
-def get_cdf(price):
-    mu1 = 14.05
-    sigma1 = 0.8264
+def get_cdf(price,beta):
+    mu1 = beta[2]
+    if beta[3]<0:
+        beta[3] =0.1 
+    sigma1 = beta[3]
+
     cdf = NormalDist(mu=mu1, sigma=sigma1).cdf(price)
     return cdf
 

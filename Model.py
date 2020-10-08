@@ -25,7 +25,7 @@ def calculate_prob(contract_info_one_month, ad_info_one_month, beta):
         utility = get_utility(available_ad_df, beta)
         prob_serie = get_probability(utility)       
         if(i != len(contract_info_one_month)):
-            dif_cdf = DataPrep.get_dif_cdf(ad_info_one_month['contract_price'],index_row)
+            dif_cdf = DataPrep.get_dif_cdf(ad_info_one_month['contract_price'],index_row,beta)
         else:
             dif_cdf = DataPrep.get_last_dif_cdf(base_contract_price)
         print("I : ", i, "CDF: ", dif_cdf, "Length: ", len(available_ad_df))

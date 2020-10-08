@@ -18,7 +18,8 @@ def log_likelihood(beta):
     return ll
 
 
-beta = np.array([[1 , 1]])
+#beta = np.array([[1 , 1.1, 15 ,1.2]])
+beta = np.array([[-0.03] , [57], [14] ,[0.6]])
 result = op.minimize(log_likelihood, beta, method='CG')
 
 print(result)
