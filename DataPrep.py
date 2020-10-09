@@ -1,5 +1,5 @@
 from statistics import NormalDist
-
+import scipy.stats as stats
 
 
 def one_month_data(data_frame):
@@ -45,11 +45,10 @@ def get_dif_cdf_for_prices(lower_price, upper_price,beta):
 
 def get_cdf(price,beta):
     mu1 = beta[2]
-    if beta[3]<0:
-        beta[3] =0.1 
-    sigma1 = beta[3]
-
-    cdf = NormalDist(mu=mu1, sigma=sigma1).cdf(price)
+    if beta[3]<=0:
+        beta[3] =2
+    B = beta[3]
+    cdf = stats.gumbel_r.cdf(price, mu1, B)
     return cdf
 
 def get_last_dif_cdf(price):
