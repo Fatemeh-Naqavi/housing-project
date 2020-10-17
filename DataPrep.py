@@ -1,12 +1,16 @@
 from statistics import NormalDist
 import scipy.stats as stats
+import numpy as np
+import pandas as pd
+from bisect import bisect_right 
 
 
 def one_month_data(data_frame):
     return data_frame.loc[data_frame['contract_date_as_days'] < 643].copy() #671 for all first month
 
 # %%
-def get_available_ads(index_row, base_contract_date, base_contract_price, ad_info):
+
+def get_available_ads_index(index_row, base_contract_date, base_contract_price, ad_info):
     available_ads = []
     for j, item in enumerate(ad_info['contract_date_as_days']):
         idx = ad_info.index[j]        
@@ -19,24 +23,35 @@ def get_available_ads(index_row, base_contract_date, base_contract_price, ad_inf
             available_ads.append(ad_info.index[j])
     ad_info.loc[available_ads].sort_values(by = ['contract_price'], inplace = True)
     available_ad_df = ad_info.loc[available_ads][ad_info.loc[available_ads]['contract_price'] <= base_contract_price]    
-    return available_ad_df 
+    return np.array(available_ad_df.index) 
 
-def get_dif_cdf(ad_info_series, index,beta):
-    ad_info_sorted_by_price = ad_info_series.sort_values()
-    ad_info_sorted_by_price_with_new_index = ad_info_sorted_by_price.reset_index()
-    row = ad_info_sorted_by_price_with_new_index[ad_info_sorted_by_price_with_new_index['Index'] == index]
-    lower_price = row.contract_price
+def get_availabe_ads_new_method(contract_info_one_month, ad_info_one_month):
+    av_df = pd.DataFrame(index = contract_info_one_month.index, columns = ['av']).astype(object)
     
-    idx = row.index.astype(int)[0]
-    upper_price_index = idx
-    for i in range(idx,len(ad_info_sorted_by_price_with_new_index)):
-        if (ad_info_sorted_by_price_with_new_index.contract_price.loc[i] != lower_price).bool():
-            upper_price_index = i
-            break
-    
-    upper_price = ad_info_sorted_by_price_with_new_index.loc[upper_price_index].contract_price
-    return get_dif_cdf_for_prices(lower_price, upper_price,beta)
+    for row in contract_info_one_month.itertuples():
+        row_index = getattr(row, 'Index')
+        available_ads_index = get_available_ads_index(
+            row_index,
+            getattr(row, 'contract_date_as_days'), 
+            getattr(row, 'contract_price'),
+            ad_info_one_month)
+        av_df['av'].loc[row_index] = available_ads_index
+    return av_df
 
+
+def get_next_larger_price(ad_price_series_sorted, base_price):
+    next_larger_price = ad_price_series_sorted[bisect_right(ad_price_series_sorted, base_price)]
+    return next_larger_price
+    
+def add_next_larger_price_to_contract_info(contract_info, ad_info):
+    ad_sorted_price = ad_info.contract_price.sort_values().tolist()
+    larger_price = pd.Series(index =contract_info.index)
+    for i, item in enumerate(contract_info['contract_price']):    
+        larger_price.loc[contract_info.index[i]] = get_next_larger_price(ad_sorted_price, item)
+    contract_info['larger_price'] = larger_price
+    return contract_info
+    
+    
 def get_dif_cdf_for_prices(lower_price, upper_price,beta):
     cdf_low = get_cdf(lower_price,beta)
     cdf_up = get_cdf(upper_price,beta)
@@ -45,11 +60,16 @@ def get_dif_cdf_for_prices(lower_price, upper_price,beta):
 
 def get_cdf(price,beta):
     mu1 = beta[2]
-    #if beta[3]<=0:
-    #    beta[3] =2
     B = beta[3]*beta[3]
     cdf = stats.gumbel_r.cdf(price, mu1, B)
     return cdf
+
+def get_cdf1(price,beta):
+    mu1 = beta[2]
+    sigma1 = beta[3]*beta[3]
+    cdf = NormalDist(mu=mu1, sigma=sigma1).cdf(price)
+    return cdf
+
 
 def get_last_dif_cdf(price):
     cdf_low = get_cdf(price)

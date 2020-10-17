@@ -14,21 +14,20 @@ def get_probability(utility):
     prob = np.exp(utility) / sum(np.exp(utility))
     return prob
 
-
-def calculate_prob(contract_info_one_month, ad_info_one_month, beta):
+def calculate_prob(contract_info_one_month, ad_info_one_month, all_av_ad_df,beta):
+    
     prob = pd.Series()
     prob = prob.reindex(contract_info_one_month.index)
     for i, item in enumerate(contract_info_one_month['contract_date_as_days']):
         index_row = contract_info_one_month.index[i]
         base_contract_price = contract_info_one_month['contract_price'].loc[index_row]
-        available_ad_df = DataPrep.get_available_ads(index_row, item, base_contract_price, ad_info_one_month)  
-        utility = get_utility(available_ad_df, beta)
+        av_ad_index_array = all_av_ad_df.loc[index_row]['av']
+        av_ad_df = ad_info_one_month.loc[ad_info_one_month.index.isin(av_ad_index_array)]
+        utility = get_utility(av_ad_df, beta)
         prob_serie = get_probability(utility)   
-        
         if(i != len(contract_info_one_month)):
-            dif_cdf = DataPrep.get_dif_cdf(ad_info_one_month['contract_price'],index_row,beta)
+            dif_cdf = DataPrep.get_dif_cdf_for_prices(contract_info_one_month['contract_price'].loc[index_row],contract_info_one_month['larger_price'].loc[index_row],beta)
         else:
             dif_cdf = DataPrep.get_last_dif_cdf(base_contract_price)
-        #print("I : ", i, "CDF: ", dif_cdf, "Length: ", len(available_ad_df))
         prob.loc[index_row] = prob_serie.loc[index_row].copy() * dif_cdf
     return prob
