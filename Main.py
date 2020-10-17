@@ -15,11 +15,12 @@ contract_info_one_month['contract_price'] = contract_info_one_month['contract_pr
 def log_likelihood(beta):
     prb = Model.calculate_prob(contract_info_one_month, ad_info_one_month, beta)
     ll = -np.sum(np.log(prb))
+    print(ll)
     return ll
 
 
 #beta = np.array([[-0.03 , 62, 15 ,1.2]])
-beta = np.array([[-0.1] , [4.8], [14.2] ,[2]])
+beta = np.array([[2.49] , [61.10], [13.72] ,[0.73]])
 result = op.minimize(log_likelihood, beta, method='CG')
 
 print(result)
