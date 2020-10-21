@@ -58,13 +58,13 @@ def get_dif_cdf_for_prices(lower_price, upper_price,beta):
     cdf = cdf_up - cdf_low
     return  cdf
 
-def get_cdf(price,beta):
+def get_cdf1(price,beta):
     mu1 = beta[2]
     B = beta[3]*beta[3]
     cdf = stats.gumbel_r.cdf(price, mu1, B)
     return cdf
 
-def get_cdf1(price,beta):
+def get_cdf(price,beta):
     mu1 = beta[2]
     sigma1 = beta[3]*beta[3]
     cdf = NormalDist(mu=mu1, sigma=sigma1).cdf(price)
