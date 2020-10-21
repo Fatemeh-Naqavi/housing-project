@@ -20,7 +20,6 @@ def calculate_prob(contract_info_one_month, ad_info_one_month, all_av_ad_df,beta
     prob = prob.reindex(contract_info_one_month.index)
     for i, item in enumerate(contract_info_one_month['contract_date_as_days']):
         index_row = contract_info_one_month.index[i]
-        #base_contract_price = contract_info_one_month['contract_price'].loc[index_row]
         av_ad_index_array = all_av_ad_df.loc[index_row]['av']
         av_ad_df = ad_info_one_month.loc[ad_info_one_month.index.isin(av_ad_index_array)]
         utility = get_utility(av_ad_df, beta)
