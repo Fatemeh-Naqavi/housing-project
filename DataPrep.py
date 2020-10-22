@@ -21,9 +21,9 @@ def get_available_ads_index(index_row, base_contract_date, base_contract_price, 
         day_between_contract_dates = base_contract_date - other_contract_date
         if day_between_contract_dates < 1:
             available_ads.append(ad_info.index[j])
-    ad_info.loc[available_ads].sort_values(by = ['contract_price'], inplace = True)
-    available_ad_df = ad_info.loc[available_ads][ad_info.loc[available_ads]['contract_price'] <= base_contract_price]    
-    return np.array(available_ad_df.index) 
+    #ad_info.loc[available_ads].sort_values(by = ['contract_price'], inplace = True)
+    #available_ad_df = ad_info.loc[available_ads]#[ad_info.loc[available_ads]['contract_price'] <= base_contract_price]    
+    return np.array(available_ads) 
 
 def get_availabe_ads_new_method(contract_info_one_month, ad_info_one_month):
     av_df = pd.DataFrame(index = contract_info_one_month.index, columns = ['av']).astype(object)
@@ -43,13 +43,15 @@ def get_next_larger_price(ad_price_series_sorted, base_price):
     next_larger_price = ad_price_series_sorted[bisect_right(ad_price_series_sorted, base_price)]
     return next_larger_price
     
-def add_next_larger_price_to_contract_info(contract_info, ad_info):
+def add_next_larger_price_to_ad_info(ad_info):
     ad_sorted_price = ad_info.contract_price.sort_values().tolist()
-    larger_price = pd.Series(index =contract_info.index)
-    for i, item in enumerate(contract_info['contract_price']):    
-        larger_price.loc[contract_info.index[i]] = get_next_larger_price(ad_sorted_price, item)
-    contract_info['larger_price'] = larger_price
-    return contract_info
+    larger_price = pd.Series(index =ad_info.index)
+    for i, item in enumerate(ad_info['contract_price']):   
+        if i < len(ad_info['contract_price']) -1 :
+            larger_price.loc[ad_info.index[i]] = get_next_larger_price(ad_sorted_price, item)
+        else: larger_price.loc[ad_info.index[i]] = ad_info['contract_price'].loc[ad_info.index[i]]
+    ad_info['larger_price'] = larger_price
+    return ad_info
     
     
 def get_dif_cdf_for_prices(lower_price, upper_price,beta):
