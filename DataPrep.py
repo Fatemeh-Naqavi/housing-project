@@ -6,7 +6,7 @@ from bisect import bisect_right
 
 
 def one_month_data(data_frame):
-    return data_frame.loc[data_frame['contract_date_as_days'] < 643].copy() #671 for all first month
+    return data_frame.loc[data_frame['contract_date_as_days'] < 673].copy() #671 for all first month
 
 # %%
 
@@ -48,6 +48,7 @@ def add_next_larger_price_to_ad_info(ad_info):
     larger_price = pd.Series(index =ad_info.index)
     for i, item in enumerate(ad_info['contract_price']):   
         if i < len(ad_info['contract_price']) -1 :
+            print(i)
             larger_price.loc[ad_info.index[i]] = get_next_larger_price(ad_sorted_price, item)
         else: larger_price.loc[ad_info.index[i]] = ad_info['contract_price'].loc[ad_info.index[i]]
     ad_info['larger_price'] = larger_price
@@ -61,14 +62,14 @@ def get_dif_cdf_for_prices(lower_price, upper_price,beta):
     return  cdf
 
 def get_cdf1(price,beta):
-    mu1 = beta[2]
-    B = beta[3]*beta[3]
+    mu1 = beta[1]
+    B = beta[2]*beta[2]
     cdf = stats.gumbel_r.cdf(price, mu1, B)
     return cdf
 
 def get_cdf(price,beta):
-    mu1 = beta[2]
-    sigma1 = beta[3]*beta[3]
+    mu1 = beta[1]
+    sigma1 = beta[2]*beta[2]
     cdf = NormalDist(mu=mu1, sigma=sigma1).cdf(price)
     return cdf
 

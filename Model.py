@@ -6,8 +6,8 @@ import DataPrep
 def get_utility(available_ad_data_frame, beta):
     available_ad_data_frame.sort_values(by = ['contract_price'], inplace = True)
     first = available_ad_data_frame['living_area'].apply(lambda x: x * beta[0])
-    second = available_ad_data_frame['contract_price'].apply(lambda x: x * beta[1])
-    utility_serie = first + second
+   # second = available_ad_data_frame['contract_price'].apply(lambda x: x * beta[1])
+    utility_serie = first #+ second
     utility_df = add_duplicate_indicator(utility_serie, available_ad_data_frame)
     dif_cdf = pd.Series(index = available_ad_data_frame['larger_price'].index)
     for i, row in available_ad_data_frame.iterrows():
@@ -26,7 +26,8 @@ def add_duplicate_indicator(utility_serie, available_ad_data_frame):
     
 def get_probability(utility_df,row_index):
     prob_df = pd.DataFrame(index = utility_df.index)
-    prob_df['exp_utility'] = utility_df['utility'].apply(lambda x: np.exp(x))
+    du=np.max(utility_df['utility'])
+    prob_df['exp_utility'] = utility_df['utility'].apply(lambda x: np.exp(x-du))
     prob_df['cumsum_exp_utility'] = np.cumsum(prob_df['exp_utility'])
     prob_df['dup_indicator'] = utility_df['dup_indicator']
     prob_df['cumsum_exp_utility'].loc[utility_df['dup_indicator']]=None
