@@ -6,7 +6,7 @@ from bisect import bisect_right
 
 
 def one_month_data(data_frame):
-    return data_frame.loc[data_frame['contract_date_as_days'] < 643].copy() #671 for all first month
+    return data_frame.loc[data_frame['contract_date_as_days'] < 671].copy() #671 for all first month
 
 # %%
 
